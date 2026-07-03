@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore Exchange Point's certified pre-owned car inventory. Filter by budget, brand, body type, and fuel. Book a free test drive online.">
+    <title>Certified Pre-Owned Cars | Exchange Point Inventory</title>
+
+    <!-- Design System Stylesheets -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Page Specific Styles -->
+    <style>
+        .inventory-page {
+            padding-top: calc(var(--header-height) + var(--space-xl));
+            padding-bottom: var(--space-xxl);
+        }
+
+        .inventory-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: var(--space-xl);
+            margin-top: var(--space-lg);
+            align-items: flex-start;
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-lg);
+            position: sticky;
+            top: calc(var(--header-height) + 20px);
+            max-height: calc(100vh - var(--header-height) - 40px);
+            overflow-y: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--secondary-silver-dark);
+            padding-bottom: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .filter-header h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .clear-all-btn {
+            font-size: 0.8rem;
+            color: var(--secondary-silver-muted);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1.5px solid transparent;
+            transition: var(--transition-fast);
+        }
+
+        .clear-all-btn:hover {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .filter-group {
+            margin-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--secondary-silver-dark);
+            padding-bottom: var(--space-lg);
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .filter-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Checkbox lists */
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.9rem;
+            color: var(--primary-navy-light);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-label input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--secondary-silver-dark);
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            position: relative;
+            transition: var(--transition-fast);
+            flex-shrink: 0;
+            background-color: var(--secondary-silver);
+        }
+
+        .checkbox-label input:checked+.custom-checkbox {
+            background-color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
+        .checkbox-label input:checked+.custom-checkbox::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            width: 4px;
+            height: 8px;
+            border: solid var(--primary-navy);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Pill filters (Fuel type) */
+        .pills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .pill-label {
+            cursor: pointer;
+        }
+
+        .pill-label input {
+            display: none;
+        }
+
+        .custom-pill {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: var(--secondary-silver);
+            border: 1px solid var(--secondary-silver-dark);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-navy-light);
+            transition: var(--transition-fast);
+        }
+
+        .pill-label input:checked+.custom-pill {
+            background-color: var(--primary-navy);
+            color: #FFFFFF;
+            border-color: var(--primary-navy);
+        }
+
+        /* Budget Slider styling */
+        .slider-wrapper {
+            margin-top: var(--space-sm);
+        }
+
+        .budget-range {
+            width: 100%;
+            margin-bottom: var(--space-sm);
+            accent-color: var(--accent-gold);
+            cursor: pointer;
+        }
+
+        .slider-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-navy-light);
+        }
+
+        /* Top Filter / Search Bar in Content Area */
+        .inventory-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-md) var(--space-lg);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .results-count {
+            font-weight: 600;
+            color: var(--primary-navy-light);
+        }
+
+        .sort-search-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex-grow: 1;
+            justify-content: flex-end;
+            min-width: 280px;
+        }
+
+        .search-input-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 320px;
+        }
+
+        .search-input-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--secondary-silver-dark);
+            border-radius: var(--radius-md);
+            background-color: var(--secondary-silver);
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+
+        .search-input-box input:focus {
+            border-color: var(--accent-gold);
+            background-color: #FFFFFF;
+        }
+
+        .search-input-box svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-silver-muted);
+            pointer-events: none;
+        }
+
+        .sort-select-box select {
+            padding: 8px 32px 8px 12px;
+            border: 1px solid var(--secondary-silver-dark);
+            border-radius: var(--radius-md);
+            background-color: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 500;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xxl) var(--space-xl);
+            grid-column: 1 / -1;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--secondary-silver-muted);
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: center;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .empty-state p {
+            color: var(--secondary-silver-muted);
+            margin-bottom: var(--space-lg);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Mobile filter floating button */
+        .mobile-filter-bar {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Responsive Breakpoint Overrides */
+        @media (max-width: 992px) {
+            .inventory-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-panel {
+                display: none;
+                /* Hide standard sidebar */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                z-index: 1500;
+                border-radius: 0;
+                border: none;
+            }
+
+            .filter-panel.active {
+                display: block;
+                animation: slideUp 0.3s ease;
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                }
+
+                to {
+                    transform: translateY(0);
+                }
+            }
+
+            .mobile-filter-bar {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navigation -->
+    <div id="global-header"></div>
+
+    <!-- MAIN INVENTORY LAYOUT -->
+    <main class="inventory-page">
+        <div class="container">
+            <div class="section-header"
+                style="text-align: left; margin-left: 0; margin-bottom: var(--space-md); max-width: 100%;">
+                <h2>Certified Pre-Owned Cars</h2>
+                <p>Find the perfect certified car. Inspected on 150+ parameters. Ready for transfer.</p>
+            </div>
+
+            <div class="inventory-layout">
+                <!-- 1. LEFT SIDEBAR FILTER PANEL -->
+                <aside class="filter-panel" id="filter-panel">
+                    <div class="filter-header">
+                        <h3>Filters</h3>
+                        <div class="clear-all-btn" id="clear-filters-btn">Clear All</div>
+                        <button class="modal-close" id="close-filters-btn" style="display: none; position: static;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Budget Max Slider -->
+                    <div class="filter-group">
+                        <div class="filter-title">Max Budget</div>
+                        <div class="slider-wrapper">
+                            <input type="range" id="filter-budget-slider" class="budget-range" min="0" max="30" step="1"
+                                value="30">
+                            <div class="slider-values">
+                                <span>₹0 Lakh</span>
+                                <span id="budget-value" style="color: var(--accent-gold); font-weight:700;">Any
+                                    Budget</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brands Filter -->
+                    <div class="filter-group">
+                        <div class="filter-title">Brand</div>
+                        <div class="checkbox-list">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Maruti Suzuki">
+                                <span class="custom-checkbox"></span>
+                                Maruti Suzuki
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Hyundai">
+                                <span class="custom-checkbox"></span>
+                                Hyundai
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Honda">
+                                <span class="custom-checkbox"></span>
+                                Honda
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Tata">
+                                <span class="custom-checkbox"></span>
+                                Tata
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Mahindra">
+                                <span class="custom-checkbox"></span>
+                                Mahindra
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Nissan">
+                                <span class="custom-checkbox"></span>
+                                Nissan
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Volkswagen">
+                                <span class="custom-checkbox"></span>
+                                Volkswagen
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Audi">
+                                <span class="custom-checkbox"></span>
+                                Audi
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="BMW">
+                                <span class="custom-checkbox"></span>
+                                BMW
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Datsun">
+                                <span class="custom-checkbox"></span>
+                                Datsun
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Renault">
+                                <span class="custom-checkbox"></span>
+                                Renault
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Jeep">
+                                <span class="custom-checkbox"></span>
+                                Jeep
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Fiat">
+                                <span class="custom-checkbox"></span>
+                                Fiat
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Citroen">
+                                <span class="custom-checkbox"></span>
+                                Citroen
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Skoda">
+                                <span class="custom-checkbox"></span>
+                                Skoda
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="MG">
+                                <span class="custom-checkbox"></span>
+                                MG Motor
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="brand" value="Kia">
+                                <span class="custom-checkbox"></span>
+                                Kia
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Fuel Type Filter -->
+                    <div class="filter-group">
+                        <div class="filter-title">Fuel Type</div>
+                        <div class="pills-grid">
+                            <label class="pill-label">
+                                <input type="checkbox" name="fuel" value="Petrol">
+                                <span class="custom-pill">Petrol</span>
+                            </label>
+                            <label class="pill-label">
+                                <input type="checkbox" name="fuel" value="Diesel">
+                                <span class="custom-pill">Diesel</span>
+                            </label>
+                            <label class="pill-label">
+                                <input type="checkbox" name="fuel" value="CNG">
+                                <span class="custom-pill">CNG</span>
+                            </label>
+                            <label class="pill-label">
+                                <input type="checkbox" name="fuel" value="Electric">
+                                <span class="custom-pill">Electric</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Body Type Filter -->
+                    <div class="filter-group">
+                        <div class="filter-title">Body Type</div>
+                        <div class="checkbox-list">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyType" value="SUV">
+                                <span class="custom-checkbox"></span>
+                                SUV
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyType" value="Sedan">
+                                <span class="custom-checkbox"></span>
+                                Sedan
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyType" value="Hatchback">
+                                <span class="custom-checkbox"></span>
+                                Hatchback
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Transmission Filter -->
+                    <div class="filter-group">
+                        <div class="filter-title">Transmission</div>
+                        <div class="checkbox-list">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="transmission" value="Manual">
+                                <span class="custom-checkbox"></span>
+                                Manual
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="transmission" value="Automatic">
+                                <span class="custom-checkbox"></span>
+                                Automatic
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-block" id="apply-mobile-filters-btn"
+                        style="display: none; margin-top: var(--space-lg);">
+                        Apply Filters
+                    </button>
+                </aside>
+
+                <!-- 2. RIGHT GRID AND SEARCH RESULTS AREA -->
+                <div class="inventory-content-area">
+                    <!-- Dynamic Header Search Results Bar -->
+                    <div class="inventory-header-bar">
+                        <div class="results-count" id="results-count-text">Showing 0 Cars</div>
+
+                        <div class="sort-search-actions">
+                            <!-- Live search text input -->
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <div class="search-input-box" style="margin-bottom:0; flex:1;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                    <input type="text" id="inventory-search-input"
+                                        placeholder="Search brand or model...">
+                                </div>
+                                <button id="inventory-search-submit-btn" class="btn btn-primary"
+                                    style="height:44px; padding: 0 var(--space-md); font-size:0.85rem; font-weight:700; border-radius: var(--radius-md); text-transform: uppercase; letter-spacing: 0.5px; border: none; white-space: nowrap;">Search</button>
+                            </div>
+
+                            <!-- Sorting dropdown -->
+                            <div class="sort-select-box">
+                                <select id="inventory-sort-select" aria-label="Sort Cars">
+                                    <option value="year_desc">Newest First</option>
+                                    <option value="price_asc">Price: Low to High</option>
+                                    <option value="price_desc">Price: High to Low</option>
+                                    <option value="km_asc">KMs Driven: Low to High</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- The Core Dynamic Car Grid -->
+                    <div class="cars-grid" id="inventory-cars-grid">
+                        <!-- Dynamic content injected by assets/js/inventory.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Mobile Filter Toggle Button -->
+    <div class="mobile-filter-bar">
+        <button class="btn btn-secondary" id="mobile-filter-trigger">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+            Filter & Sort
+        </button>
+    </div>
+
+    <!-- Global Footer -->
+    <div id="global-footer"></div>
+
+    <!-- Inventory Script Module -->
+    <script type="module" src="assets/js/inventory.js"></script>
+    <!-- Common Module -->
+    <script type="module" src="assets/js/common.js"></script>
+</body>
+
+</html>

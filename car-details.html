@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View full specifications, high resolution photo gallery, and the certified inspection report. Book a free test drive online or reserve this car instantly.">
+    <title>Car Details | Exchange Point Showroom</title>
+    
+    <!-- Design System Stylesheets -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Page Specific Styles -->
+    <style>
+        .details-page {
+            padding-top: calc(var(--header-height) + var(--space-xl));
+            padding-bottom: var(--space-xxl);
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            display: flex;
+            gap: var(--space-sm);
+            font-size: 0.85rem;
+            color: var(--secondary-silver-muted);
+            margin-bottom: var(--space-lg);
+            font-weight: 500;
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--accent-gold);
+        }
+
+        .details-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: var(--space-xl);
+            align-items: flex-start;
+        }
+
+        /* Gallery System */
+        .gallery-container {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .main-image-viewport {
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            position: relative;
+            background-color: #E2E8F0;
+        }
+
+        .main-image-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+
+        .main-image-viewport:hover img {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .thumb-item {
+            aspect-ratio: 16/10;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            background-color: #E2E8F0;
+        }
+
+        .thumb-item.active {
+            border-color: var(--accent-gold);
+        }
+
+        .thumb-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Content Blocks */
+        .details-content-block {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .block-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            border-bottom: 2px solid var(--secondary-silver-dark);
+            padding-bottom: var(--space-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Specs List Grid */
+        .specs-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .spec-details-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .spec-details-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background-color: var(--secondary-silver);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+            border: 1px solid var(--secondary-silver-dark);
+        }
+
+        .spec-details-text span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--secondary-silver-muted);
+            font-weight: 500;
+        }
+
+        .spec-details-text strong {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--primary-navy);
+            font-weight: 700;
+        }
+
+        /* Certified Inspection Score Dashboard */
+        .inspection-summary {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+            background-color: rgba(13, 148, 136, 0.05);
+            border: 1px dashed var(--accent-teal);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .inspection-overall-gauge {
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-teal);
+            color: #FFFFFF;
+            border-radius: var(--radius-full);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: var(--font-heading);
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+            flex-shrink: 0;
+        }
+
+        .inspection-overall-gauge span {
+            font-size: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .inspection-overall-gauge label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.85;
+        }
+
+        .inspection-summary-details h4 {
+            color: var(--accent-teal);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .inspection-summary-details p {
+            font-size: 0.9rem;
+            color: var(--primary-navy-light);
+        }
+
+        /* Category Gauges Row */
+        .inspection-categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            text-align: center;
+        }
+
+        .category-score-card {
+            background-color: var(--secondary-silver);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--secondary-silver-dark);
+            transition: var(--transition-fast);
+        }
+
+        .category-score-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .category-meter-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto var(--space-sm) auto;
+        }
+
+        .category-score-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-navy-light);
+        }
+
+        /* Features List block */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .feature-check-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.925rem;
+            color: var(--primary-navy-light);
+        }
+
+        .feature-check-icon {
+            color: var(--success);
+            display: flex;
+            align-items: center;
+        }
+
+        /* RIGHT STICKY SIDEBAR */
+        .sidebar-sticky {
+            position: sticky;
+            top: calc(var(--header-height) + 20px);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .price-card {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-price-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--secondary-silver-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-price {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+            line-height: 1.15;
+            margin: var(--space-xs) 0;
+        }
+
+        .sidebar-onroad-est {
+            font-size: 0.85rem;
+            color: var(--accent-teal);
+            font-weight: 600;
+            background-color: var(--accent-teal-light);
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .reserve-btn-container {
+            border-top: 1px solid var(--secondary-silver-dark);
+            padding-top: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .sidebar-badge-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .sidebar-badge-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.85rem;
+            color: var(--primary-navy-tint);
+        }
+
+        .sidebar-badge-item svg {
+            color: var(--accent-gold);
+        }
+
+        /* Test drive card */
+        .test-drive-card {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .test-drive-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+
+        /* Success alerts */
+        .checkout-success-body {
+            text-align: center;
+            padding: var(--space-xl) 0;
+        }
+
+        .success-checkmark-circle {
+            width: 72px;
+            height: 72px;
+            background-color: #DCFCE7;
+            color: var(--success);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-lg) auto;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Responsive Breakpoints Details */
+        @media (max-width: 992px) {
+            .details-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-sticky {
+                position: static;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .inspection-categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Header -->
+    <div id="global-header"></div>
+
+    <main class="details-page">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs" aria-label="Breadcrumbs">
+                <a href="index.html">Home</a>
+                <span>&gt;</span>
+                <a href="inventory.html">Buy Cars</a>
+                <span>&gt;</span>
+                <span id="breadcrumb-car-name" style="color: var(--primary-navy); font-weight:700;">Loading...</span>
+            </nav>
+
+            <div class="details-layout">
+                <!-- 1. LEFT MAIN SECTION -->
+                <div class="details-main-content">
+                    
+                    <!-- Car Identity Header -->
+                    <div style="margin-bottom: var(--space-lg);">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+                            <span id="detail-year" style="font-size: 0.95rem; color: var(--accent-teal); font-weight: 800; text-transform: uppercase;">----</span>
+                            <span id="detail-rto-tag" style="background-color: var(--secondary-silver-dark); font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-sm);">------</span>
+                            <span id="detail-certified-tag" class="car-tag certified" style="position: static; padding: 4px 8px;">Certified</span>
+                        </div>
+                        <h1 id="detail-title" style="font-size: 2.5rem; font-weight: 800; color: var(--primary-navy); margin-top: 4px;">Loading Vehicle Specs...</h1>
+                        <p id="detail-variant" style="font-size: 1.15rem; color: var(--secondary-silver-muted); font-weight: 500;"></p>
+                    </div>
+
+                    <!-- Photo Gallery viewport -->
+                    <section class="gallery-container">
+                        <div class="main-image-viewport">
+                            <img id="detail-main-img" src="" alt="Main Preview">
+                        </div>
+                        <div class="thumbnail-strip" id="detail-thumb-strip">
+                            <!-- Thumbnails injected dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- Technical Specs Table -->
+                    <section class="details-content-block">
+                        <h2 class="block-title">Key Specifications</h2>
+                        <div class="specs-details-grid">
+                            <!-- Spec 1: KM -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>Kilometers Run</span>
+                                    <strong id="spec-km">------</strong>
+                                </div>
+                            </div>
+                            <!-- Spec 2: Fuel -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V2h11v20H3z"/><path d="M14 8h3c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-3"/><path d="M19 14v6"/><circle cx="16" cy="6" r="1"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>Fuel Type</span>
+                                    <strong id="spec-fuel">------</strong>
+                                </div>
+                            </div>
+                            <!-- Spec 3: Transmission -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>Transmission</span>
+                                    <strong id="spec-trans">------</strong>
+                                </div>
+                            </div>
+                            <!-- Spec 4: Owners -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>Owner Details</span>
+                                    <strong id="spec-owners">------</strong>
+                                </div>
+                            </div>
+                            <!-- Spec 5: RTO -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="4"/><line x1="8" y1="2" x2="8" y2="4"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>RTO Location</span>
+                                    <strong id="spec-rto">------</strong>
+                                </div>
+                            </div>
+                            <!-- Spec 6: Insurance -->
+                            <div class="spec-details-item">
+                                <div class="spec-details-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <div class="spec-details-text">
+                                    <span>Insurance Status</span>
+                                    <strong id="spec-insurance">------</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- INSPECTION REPORT DASHBOARD -->
+                    <section class="details-content-block">
+                        <h2 class="block-title">
+                            Certified Inspection Report
+                            <span style="font-size: 0.85rem; color: var(--accent-teal); border: 1px solid var(--accent-teal); padding: 2px 6px; border-radius: var(--radius-sm);">150+ Checked</span>
+                        </h2>
+
+                        <!-- Summary row -->
+                        <div class="inspection-summary">
+                            <div class="inspection-overall-gauge">
+                                <span id="gauge-overall">--</span>
+                                <label>Score</label>
+                            </div>
+                            <div class="inspection-summary-details">
+                                <h4 id="inspection-verdict-title">Evaluating Condition...</h4>
+                                <p>This car is certified clean by Exchange Point engineers. Critical checks like engine health, cooling, frame structural integrity, and tires have passed validation.</p>
+                            </div>
+                        </div>
+
+                        <!-- 4 Category gauges row -->
+                        <div class="inspection-categories">
+                            <!-- Category 1: Engine -->
+                            <div class="category-score-card">
+                                <div class="category-meter-container">
+                                    <!-- Dynamic SVG circle loader -->
+                                    <svg width="60" height="60" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                        <path id="circle-engine" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--accent-teal)" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" />
+                                        <text x="18" y="21.5" text-anchor="middle" font-size="9" font-weight="700" fill="var(--primary-navy)" style="transform: rotate(90deg); transform-origin: center;" id="text-engine">--</text>
+                                    </svg>
+                                </div>
+                                <div class="category-score-label">Engine</div>
+                            </div>
+                            <!-- Category 2: AC -->
+                            <div class="category-score-card">
+                                <div class="category-meter-container">
+                                    <svg width="60" height="60" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                        <path id="circle-ac" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--accent-teal)" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" />
+                                        <text x="18" y="21.5" text-anchor="middle" font-size="9" font-weight="700" fill="var(--primary-navy)" style="transform: rotate(90deg); transform-origin: center;" id="text-ac">--</text>
+                                    </svg>
+                                </div>
+                                <div class="category-score-label">AC & Heating</div>
+                            </div>
+                            <!-- Category 3: Tyres -->
+                            <div class="category-score-card">
+                                <div class="category-meter-container">
+                                    <svg width="60" height="60" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                        <path id="circle-tyres" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--accent-teal)" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" />
+                                        <text x="18" y="21.5" text-anchor="middle" font-size="9" font-weight="700" fill="var(--primary-navy)" style="transform: rotate(90deg); transform-origin: center;" id="text-tyres">--</text>
+                                    </svg>
+                                </div>
+                                <div class="category-score-label">Suspension</div>
+                            </div>
+                            <!-- Category 4: Electricals -->
+                            <div class="category-score-card">
+                                <div class="category-meter-container">
+                                    <svg width="60" height="60" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                        <path id="circle-electricals" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--accent-teal)" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" />
+                                        <text x="18" y="21.5" text-anchor="middle" font-size="9" font-weight="700" fill="var(--primary-navy)" style="transform: rotate(90deg); transform-origin: center;" id="text-electricals">--</text>
+                                    </svg>
+                                </div>
+                                <div class="category-score-label">Electricals</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Features checklist -->
+                    <section class="details-content-block">
+                        <h2 class="block-title">Key Features Included</h2>
+                        <div class="features-grid" id="detail-features-grid">
+                            <!-- Injected by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Narrative Description -->
+                    <section class="details-content-block">
+                        <h2 class="block-title">Expert Opinion & Overview</h2>
+                        <p id="detail-description" style="color: var(--primary-navy-light); font-size: 1.05rem; line-height: 1.7;"></p>
+                    </section>
+                </div>
+
+                <!-- 2. RIGHT STICKY SIDEBAR -->
+                <aside class="details-sidebar">
+                    <div class="sidebar-sticky">
+                        
+                        <!-- Pricing Card -->
+                        <div class="price-card">
+                            <span class="sidebar-price-label">Fixed On-Road Price</span>
+                            <div class="sidebar-price" id="detail-price">₹--.-- Lakh</div>
+                            <div class="sidebar-onroad-est" id="detail-onroad-est">EST. EMI: ₹--/mo</div>
+                            
+                            <p style="font-size: 0.85rem; color: var(--secondary-silver-muted); margin-bottom: var(--space-md);">Price includes detailed transfer processing fees and 1-year basic engine warranty.</p>
+                            
+                            <!-- Reserve Button CTA -->
+                            <div class="reserve-btn-container">
+                                <button class="btn btn-primary btn-block btn-lg" id="reserve-car-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Reserve Car for ₹5,000
+                                </button>
+                                <p style="text-align: center; font-size: 0.75rem; color: var(--secondary-silver-muted); margin-top: 6px;">100% refundable token. Reserve for 48 hours.</p>
+                            </div>
+
+                            <ul class="sidebar-badge-list">
+                                <li class="sidebar-badge-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                    5-Day Money Back Guarantee
+                                </li>
+                                <li class="sidebar-badge-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                    150+ Points Checked Certified
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Test Drive Booking Box -->
+                        <div class="test-drive-card">
+                            <h3>Book a Free Test Drive</h3>
+                            <form id="test-drive-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="td-name">Full Name</label>
+                                    <input type="text" id="td-name" class="form-control" placeholder="Your Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="td-phone">Phone Number</label>
+                                    <input type="tel" id="td-phone" class="form-control" placeholder="10-digit Mobile" pattern="[0-9]{10}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="td-date">Preferred Date</label>
+                                    <input type="date" id="td-date" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="td-hub">Hub Location</label>
+                                    <select id="td-hub" class="form-control" required>
+                                        <option value="Sector-18 Hub">Gurugram Hub (Sector 18)</option>
+                                        <option value="Saket Hub">South Delhi Hub (Saket)</option>
+                                        <option value="Whitefield Hub">Bangalore Hub (Whitefield)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-secondary btn-block">Schedule Test Drive</button>
+                            </form>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- TOKEN RESERVATION CHECKOUT MODAL -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close" id="close-checkout-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <div id="checkout-modal-form-content">
+                <h3 class="modal-title">Secure Reservation Checkout</h3>
+                
+                <div style="background-color: var(--secondary-silver); padding: var(--space-md); border-radius: var(--radius-md); border:1px solid var(--secondary-silver-dark); display:flex; gap: var(--space-md); margin-bottom: var(--space-lg); align-items:center;">
+                    <div id="modal-car-blueprint-container" style="width: 80px; height: 50px; flex-shrink: 0; border-radius: var(--radius-sm); overflow: hidden;"></div>
+                    <div>
+                        <strong id="modal-car-name" style="font-size: 1.05rem; color:var(--primary-navy);">----</strong>
+                        <p style="font-size: 0.8rem; color: var(--secondary-silver-muted);" id="modal-car-desc"></p>
+                    </div>
+                </div>
+
+                <div class="custom-alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <div>
+                        <strong>Token Payment: ₹5,000</strong>
+                        <p style="font-size: 0.75rem; margin-top:2px;">100% Refundable within 48 hours if you cancel or choose not to purchase.</p>
+                    </div>
+                </div>
+
+                <form id="reservation-form">
+                    <div class="form-group">
+                        <label class="form-label" for="res-name">Billing Name</label>
+                        <input type="text" id="res-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="res-email">Email Address</label>
+                        <input type="email" id="res-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="res-phone">Mobile Number</label>
+                        <input type="tel" id="res-phone" class="form-control" pattern="[0-9]{10}" placeholder="10-digit mobile" required>
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:var(--space-md); border-top:1px solid var(--secondary-silver-dark); padding-top:var(--space-md); margin-top:var(--space-lg);">
+                        <div class="form-group">
+                            <label class="form-label" for="card-num">Mock Card Number</label>
+                            <input type="text" id="card-num" class="form-control" placeholder="4111 2222 3333 4444" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="card-cvv">CVV</label>
+                            <input type="password" id="card-cvv" class="form-control" placeholder="***" maxLength="3" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-payment-btn" style="margin-top: var(--space-md);">
+                        Pay ₹5,000 & Reserve
+                    </button>
+                </form>
+            </div>
+
+            <!-- Injected upon successful payment checkout confirmation -->
+            <div id="checkout-modal-success-content" style="display: none;">
+                <div class="checkout-success-body">
+                    <div class="success-checkmark-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight:800; color:var(--primary-navy); margin-bottom: var(--space-xs);">Reservation Confirmed!</h3>
+                    <p style="color:var(--secondary-silver-muted); font-size: 0.9rem; margin-bottom: var(--space-xl);">Your payment token receipt is secured.</p>
+                    
+                    <div style="background-color: var(--secondary-silver); border:1px solid var(--secondary-silver-dark); padding: var(--space-lg); border-radius: var(--radius-md); text-align: left; font-size: 0.85rem; margin-bottom: var(--space-xl); display:flex; flex-direction:column; gap: var(--space-sm);">
+                        <div><strong>Receipt ID:</strong> <span id="receipt-booking-id">EP-RES-1728203</span></div>
+                        <div><strong>Reserved Vehicle:</strong> <span id="receipt-car-name">----</span></div>
+                        <div><strong>Amount Paid:</strong> ₹5,000 (Refundable)</div>
+                        <div><strong>Time Limit:</strong> Holds until <span id="receipt-expiry">--/--/--</span></div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-block" id="success-done-btn">Back to Inventory</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <div id="global-footer"></div>
+
+    <!-- Details Logic script -->
+    <script type="module" src="assets/js/details.js"></script>
+    <!-- Common Script -->
+    <script type="module" src="assets/js/common.js"></script>
+</body>
+</html>
