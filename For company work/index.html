@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Exchange Point - Premium Certified Used Cars. Drive in with your old car, and drive out with a bold certified vehicle. 5-day money-back guarantee.">
+    <title>Exchange Point | Premium Certified Used Cars Showroom</title>
+    
+    <!-- Design System Stylesheets -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Page Specific Styles (Embedded for faster loading and page-specific isolation) -->
+    <style>
+        /* Hero Section */
+        .hero {
+            position: relative;
+            background: radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+                        linear-gradient(135deg, var(--primary-navy) 0%, #090D1A 100%);
+            min-height: 85vh;
+            padding-top: calc(var(--header-height) + var(--space-xxl));
+            padding-bottom: var(--space-xxl);
+            display: flex;
+            align-items: center;
+            color: #FFFFFF;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-gold);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.15;
+            margin-bottom: var(--space-md);
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(to right, var(--accent-gold), #FB923C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--secondary-silver-muted);
+            margin-bottom: var(--space-xl);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Hero Action Buttons */
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xxl);
+        }
+
+        /* Advanced Search Filter Bar */
+        .search-bar-container {
+            background-color: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-xl);
+            text-align: left;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto;
+            gap: var(--space-md);
+            align-items: flex-end;
+        }
+
+        .search-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .search-form-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--secondary-silver-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-form-control {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 0.75rem var(--space-md);
+            transition: var(--transition-fast);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.1rem;
+            padding-right: 2.5rem;
+        }
+
+        .search-form-control:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .search-form-control option {
+            background-color: var(--primary-navy);
+            color: #FFFFFF;
+        }
+
+        .search-btn {
+            height: 48px;
+            padding: 0 var(--space-xl);
+            white-space: nowrap;
+        }
+
+        /* How it works */
+        .hiw-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            position: relative;
+            margin-top: var(--space-xl);
+        }
+
+        .hiw-step-card {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xl) var(--space-lg);
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-normal);
+            z-index: 2;
+        }
+
+        .hiw-step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-gold);
+        }
+
+        .hiw-step-num {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-navy);
+            color: var(--accent-gold);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 800;
+            border: 3px solid var(--secondary-silver);
+            box-shadow: var(--shadow-md);
+        }
+
+        .hiw-step-icon {
+            font-size: 3rem;
+            color: var(--accent-gold);
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: center;
+        }
+
+        .hiw-step-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .hiw-step-card p {
+            color: var(--secondary-silver-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-gold);
+            border-radius: var(--radius-full);
+        }
+
+        .section-header p {
+            color: var(--secondary-silver-muted);
+            font-size: 1.1rem;
+            margin-top: var(--space-md);
+        }
+
+        /* Media queries for homepage */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.75rem;
+            }
+            .search-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .search-btn {
+                grid-column: span 2;
+                width: 100%;
+            }
+            .hiw-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-xl);
+            }
+            .hiw-step-card {
+                padding: var(--space-lg);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            .hero-actions {
+                flex-direction: column;
+                gap: var(--space-sm);
+                padding: 0 var(--space-lg);
+            }
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            .search-btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Translucent Header -->
+    <div id="global-header"></div>
+
+    <!-- Main Content Area -->
+    <main>
+        
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        100% Certified Showcase
+                    </div>
+                    <h1 class="hero-title">Exchange Point - <span>Drive In with Old, Drive Out with Bold.</span></h1>
+                    <p class="hero-subtitle">Premium inspection ratings, transparent valuations, and instant payouts all under one roof.</p>
+                    
+                    <!-- Call To Action CTAs -->
+                    <div class="hero-actions">
+                        <a href="inventory.html" class="btn btn-primary btn-lg">Buy a Car</a>
+                        <a href="sell.html" class="btn btn-outline-white btn-lg">Sell / Exchange Your Car</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STICKY SEARCH BAR SECTION -->
+        <div class="search-bar-sticky-wrapper">
+            <div class="container">
+                <div class="search-bar-container">
+                    <form id="hero-search-form" class="search-form">
+                        <!-- Brand -->
+                        <div class="search-form-group">
+                            <label for="search-brand">Brand</label>
+                            <select id="search-brand" class="search-form-control">
+                                <option value="">Any Brand</option>
+                                <option value="Maruti Suzuki">Maruti Suzuki</option>
+                                <option value="Hyundai">Hyundai</option>
+                                <option value="Honda">Honda</option>
+                                <option value="Tata">Tata</option>
+                                <option value="Mahindra">Mahindra</option>
+                                <option value="Nissan">Nissan</option>
+                                <option value="Volkswagen">Volkswagen</option>
+                                <option value="Audi">Audi</option>
+                                <option value="BMW">BMW</option>
+                                <option value="Datsun">Datsun</option>
+                                <option value="Renault">Renault</option>
+                                <option value="Jeep">Jeep</option>
+                                <option value="Fiat">Fiat</option>
+                                <option value="Citroen">Citroen</option>
+                                <option value="Kia">Kia</option>
+                                <option value="Skoda">Skoda</option>
+                                <option value="MG">MG Motor</option>
+                            </select>
+                        </div>
+
+                        <!-- Budget -->
+                        <div class="search-form-group">
+                            <label for="search-budget">Max Budget</label>
+                            <select id="search-budget" class="search-form-control">
+                                <option value="">No Limit</option>
+                                <option value="5">Under ₹5 Lakhs</option>
+                                <option value="10">Under ₹10 Lakhs</option>
+                                <option value="15">Under ₹15 Lakhs</option>
+                                <option value="20">Under ₹20 Lakhs</option>
+                                <option value="25">Under ₹25 Lakhs</option>
+                                <option value="30">Under ₹30 Lakhs</option>
+                            </select>
+                        </div>
+
+                        <!-- Fuel Type -->
+                        <div class="search-form-group">
+                            <label for="search-fuel">Fuel Type</label>
+                            <select id="search-fuel" class="search-form-control">
+                                <option value="">Any Fuel</option>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="CNG">CNG</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+
+                        <!-- Body Type -->
+                        <div class="search-form-group">
+                            <label for="search-body">Body Type</label>
+                            <select id="search-body" class="search-form-control">
+                                <option value="">Any Body Type</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Sedan">Sedan</option>
+                                <option value="Hatchback">Hatchback</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary search-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            Find Cars
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURED INVENTORY GRID -->
+        <section class="section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Featured Certified Cars</h2>
+                    <p>Meticulously checked across 150+ inspection points with verified records, waiting for their new home.</p>
+                </div>
+
+                <!-- Dynamic Grid container -->
+                <div class="cars-grid" id="featured-cars-grid">
+                    <!-- Dynamic Javascript Rendering -->
+                    <div style="text-align: center; grid-column: 1 / -1; padding: var(--space-xl);">
+                        <p style="color: var(--secondary-silver-muted);">Loading featured inventory...</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: var(--space-xl);">
+                    <a href="inventory.html" class="btn btn-outline">Explore Full Inventory</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section id="how-it-works" class="section-padding" style="background-color: #FFFFFF; border-top: 1px solid var(--secondary-silver-dark); border-bottom: 1px solid var(--secondary-silver-dark);">
+            <div class="container">
+                <div class="section-header">
+                    <h2>How Exchange Point Works</h2>
+                    <p>A seamless, highly transparent process to buy, sell, or exchange your vehicle in three easy steps.</p>
+                </div>
+
+                <div class="hiw-grid">
+                    <!-- Step 1 -->
+                    <div class="hiw-step-card">
+                        <div class="hiw-step-num">1</div>
+                        <div class="hiw-step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <h3>Check Valuation Online</h3>
+                        <p>Input vehicle details for instant estimation.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="hiw-step-card">
+                        <div class="hiw-step-num">2</div>
+                        <div class="hiw-step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                        <h3>Free 150+ Point Inspection</h3>
+                        <p>Bring your car to our Hub or request a home visit for a detailed inspection report.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="hiw-step-card">
+                        <div class="hiw-step-num">3</div>
+                        <div class="hiw-step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><polyline points="17 9 21 12 17 15"/></svg>
+                        </div>
+                        <h3>Instant Payout / Exchange</h3>
+                        <p>Finalize the trade and get paid immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Dynamic Footer -->
+    <div id="global-footer"></div>
+
+    <!-- Core App Logic -->
+    <script type="module">
+        import { getFeaturedCars } from './assets/js/db.js';
+        import { formatKM, formatPrice, getCarSVG, renderCarCardHTML } from './assets/js/common.js';
+
+        // Bind Search Form submission
+        document.getElementById("hero-search-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const brand = document.getElementById("search-brand").value;
+            const maxPrice = document.getElementById("search-budget").value;
+            const fuel = document.getElementById("search-fuel").value;
+            const bodyType = document.getElementById("search-body").value;
+
+            // Build search parameters
+            const params = [];
+            if (brand) params.push(`brand=${encodeURIComponent(brand)}`);
+            if (maxPrice) params.push(`maxPrice=${maxPrice}`);
+            if (fuel) params.push(`fuel=${fuel}`);
+            if (bodyType) params.push(`bodyType=${bodyType}`);
+
+            // Redirect to inventory page
+            window.location.href = `inventory.html` + (params.length > 0 ? `?${params.join("&")}` : '');
+        });
+
+        // Dynamic Loading of Featured Certified Cars
+        async function loadFeaturedCars() {
+            const grid = document.getElementById("featured-cars-grid");
+            try {
+                const cars = await getFeaturedCars();
+                grid.innerHTML = ""; // Clear loader
+                
+                if (cars.length === 0) {
+                    grid.innerHTML = `
+                        <div class="db-ready-banner" style="grid-column: 1 / -1; background-color: rgba(245, 158, 11, 0.05); border: 1px solid var(--accent-gold); border-radius: var(--radius-md); padding: var(--space-lg); text-align: left; display: flex; align-items: center; gap: var(--space-md); animation: pulse 2.5s infinite; width: 100%;">
+                            <div style="background-color: var(--accent-gold); color: var(--primary-navy); width: 48px; height: 48px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.5rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-2.239 10-5V5c0-2.761-4.477-5-10-5S2 2.239 2 5v12c0 2.761 4.477 5 10 5z"/><path d="M22 5c0 2.761-4.477 5-10 5S2 7.761 2 5"/><path d="M2 11c0 2.761 4.477 5 10 5s10-2.239 10-5"/></svg>
+                            </div>
+                            <div>
+                                <h4 style="font-weight: 700; color: var(--primary-navy); margin-bottom: 2px;">Dynamic Database Connection Ready</h4>
+                                <p style="font-size: 0.9rem; color: var(--primary-navy-light); margin-top:2px;">This section is dynamic and fully structure-ready. Connect your Google Sheet or database to display featured vehicles here.</p>
+                            </div>
+                        </div>
+                    `;
+                    // Render 3 structure-ready placeholder template cards
+                    for (let i = 0; i < 3; i++) {
+                        grid.insertAdjacentHTML("beforeend", renderCarCardHTML(null, true));
+                    }
+                    return;
+                }
+
+                cars.forEach(car => {
+                    const cardHTML = renderCarCardHTML(car, false);
+                    grid.insertAdjacentHTML("beforeend", cardHTML);
+                });
+
+                // Bind heart wishlist logic
+                const hearts = grid.querySelectorAll(".car-heart");
+                hearts.forEach(heart => {
+                    heart.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        heart.classList.toggle("active");
+                        if (heart.classList.contains("active")) {
+                            heart.querySelector("svg").setAttribute("fill", "var(--danger)");
+                            heart.querySelector("svg").setAttribute("stroke", "var(--danger)");
+                        } else {
+                            heart.querySelector("svg").setAttribute("fill", "none");
+                            heart.querySelector("svg").setAttribute("stroke", "currentColor");
+                        }
+                    });
+                });
+
+            } catch (err) {
+                console.error("Error fetching featured cars:", err);
+                grid.innerHTML = `<div style="text-align:center; grid-column:1/-1; color:var(--danger);"><p>Unable to load featured cars. Please try again.</p></div>`;
+            }
+        }
+
+        loadFeaturedCars();
+    </script>
+    
+    <!-- Shared common module -->
+    <script type="module" src="assets/js/common.js"></script>
+</body>
+</html>

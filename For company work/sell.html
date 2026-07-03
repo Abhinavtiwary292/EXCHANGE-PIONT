@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Sell or Exchange your car at Exchange Point. Use our live valuation tool, get a certified inspection rating, and secure an instant bank payout.">
+    <title>Sell or Exchange Your Car | Exchange Point</title>
+
+    <!-- Design System Stylesheets -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Page Specific Styles -->
+    <style>
+        .sell-page {
+            padding-top: calc(var(--header-height) + var(--space-xl));
+            padding-bottom: var(--space-xxl);
+        }
+
+        .sell-layout {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: var(--space-xl);
+            margin-top: var(--space-lg);
+            align-items: flex-start;
+        }
+
+        /* Form styling */
+        .sell-form-card {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--secondary-silver-dark);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--primary-navy);
+            border-bottom: 1px solid var(--secondary-silver-dark);
+            padding-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+
+        /* Trade-in Toggle Box */
+        .exchange-box {
+            background-color: var(--secondary-silver);
+            border: 1px solid var(--secondary-silver-dark);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+            transition: var(--transition-normal);
+        }
+
+        .exchange-box.active {
+            background-color: rgba(245, 158, 11, 0.05);
+            border-color: var(--accent-gold);
+        }
+
+        .toggle-switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .toggle-switch-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary-navy-light);
+        }
+
+        .toggle-switch-input {
+            display: none;
+        }
+
+        .toggle-switch-bar {
+            width: 44px;
+            height: 24px;
+            background-color: var(--secondary-silver-muted);
+            border-radius: var(--radius-full);
+            position: relative;
+            transition: var(--transition-fast);
+            display: inline-block;
+        }
+
+        .toggle-switch-bar::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: #FFFFFF;
+            border-radius: var(--radius-full);
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch-input:checked+.toggle-switch-bar {
+            background-color: var(--accent-gold);
+        }
+
+        .toggle-switch-input:checked+.toggle-switch-bar::after {
+            left: 22px;
+        }
+
+        .exchange-fields-collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+        }
+
+        .exchange-fields-collapsible.open {
+            max-height: 500px;
+            margin-top: var(--space-md);
+            border-top: 1px dashed var(--secondary-silver-dark);
+            padding-top: var(--space-md);
+            transition: max-height 0.4s ease-in;
+        }
+
+        /* Valuation Dashboard Output Column */
+        .valuation-output-card {
+            background-color: var(--primary-navy);
+            color: #FFFFFF;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--primary-navy-tint);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+            position: sticky;
+            top: calc(var(--header-height) + 20px);
+            transition: var(--transition-normal);
+        }
+
+        .valuation-pre-state {
+            padding: var(--space-xl) 0;
+        }
+
+        .valuation-pre-icon {
+            font-size: 3.5rem;
+            color: var(--accent-gold);
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: center;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .valuation-active-state {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .valuation-badge {
+            background-color: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: var(--success);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: var(--space-md);
+        }
+
+        .valuation-title {
+            font-size: 1.15rem;
+            color: var(--secondary-silver-muted);
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .valuation-price {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            line-height: 1.15;
+            margin-bottom: var(--space-xs);
+            font-family: var(--font-heading);
+        }
+
+        .valuation-range {
+            font-size: 0.95rem;
+            color: var(--secondary-silver-muted);
+            margin-bottom: var(--space-xl);
+        }
+
+        /* Trade breakdown layout */
+        .trade-breakdown-box {
+            background-color: var(--primary-navy-light);
+            border: 1px solid var(--primary-navy-tint);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: left;
+            margin-bottom: var(--space-lg);
+            font-size: 0.875rem;
+        }
+
+        .trade-breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            color: var(--secondary-silver-muted);
+        }
+
+        .trade-breakdown-row.total {
+            border-top: 1px solid var(--primary-navy-tint);
+            padding-top: var(--space-sm);
+            margin-bottom: 0;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .trade-breakdown-row.total span {
+            color: var(--accent-gold);
+        }
+
+        /* Lead modal styling */
+        .lead-success-body {
+            text-align: center;
+            padding: var(--space-xl) 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .sell-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .valuation-output-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Dynamic Header -->
+    <div id="global-header"></div>
+
+    <main class="sell-page">
+        <div class="container">
+            <div class="section-header" style="text-align: left; margin-left: 0; max-width: 100%;">
+                <h2>Sell or Exchange Your Car</h2>
+                <p>Appraise your old car in minutes. Upgrade to a certified vehicle with transparent trade-in credits.
+                </p>
+            </div>
+
+            <div class="sell-layout">
+                <!-- 1. LEFT SIDE: VALUATION INPUT FORM -->
+                <div class="sell-form-container">
+                    <div class="sell-form-card">
+                        <form id="car-valuation-form">
+                            <!-- Section 1: Car details -->
+                            <div class="form-section-title">1. Vehicle Profile</div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="val-brand">Brand</label>
+                                    <select id="val-brand" class="form-control" required>
+                                        <option value="">Select Brand</option>
+                                        <option value="Maruti Suzuki">Maruti Suzuki</option>
+                                        <option value="Hyundai">Hyundai</option>
+                                        <option value="Honda">Honda</option>
+                                        <option value="Tata">Tata</option>
+                                        <option value="Mahindra">Mahindra</option>
+                                        <option value="Toyota">Toyota</option>
+                                        <option value="Kia">Kia</option>
+                                        <option value="Skoda">Skoda</option>
+                                        <option value="MG">MG Motor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="val-year">Model Year</label>
+                                    <select id="val-year" class="form-control" required>
+                                        <option value="">Select Year</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2023">2023</option>
+                                        <option value="2022">2022</option>
+                                        <option value="2021">2021</option>
+                                        <option value="2020">2020</option>
+                                        <option value="2019">2019</option>
+                                        <option value="2018">2018</option>
+                                        <option value="2017">2017</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="val-fuel">Fuel Type</label>
+                                    <select id="val-fuel" class="form-control" required>
+                                        <option value="">Select Fuel</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="CNG">CNG</option>
+                                        <option value="Electric">Electric</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="val-km">Kilometers Driven</label>
+                                    <input type="number" id="val-km" class="form-control" placeholder="e.g. 35000"
+                                        min="100" max="250000" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: var(--space-lg);">
+                                <label class="form-label" for="val-condition">Physical Condition</label>
+                                <select id="val-condition" class="form-control" required>
+                                    <option value="good">Good (Normal wear, minor scratches)</option>
+                                    <option value="excellent">Excellent (Looks pristine, scratchless)</option>
+                                    <option value="fair">Fair (Visible scuffs, runs fine)</option>
+                                    <option value="poor">Poor (Needs body repair or major service)</option>
+                                </select>
+                            </div>
+
+                            <!-- Section 2: Exchange upgrade logic -->
+                            <div class="exchange-box" id="exchange-toggle-box">
+                                <label class="toggle-switch-container">
+                                    <span class="toggle-switch-label">Exchange for another car?</span>
+                                    <input type="checkbox" id="val-exchange-check" class="toggle-switch-input">
+                                    <span class="toggle-switch-bar"></span>
+                                </label>
+
+                                <!-- Collapsible select list -->
+                                <div class="exchange-fields-collapsible" id="exchange-fields">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="val-target-car">Select Car to Upgrade to</label>
+                                        <select id="val-target-car" class="form-control">
+                                            <option value="">Choose from Inventory...</option>
+                                            <!-- Dynamically populated from JS -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block btn-lg"
+                                style="margin-top: var(--space-xl);" id="calc-submit-btn">
+                                Calculate Estimated Valuation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 2. RIGHT SIDE: VALUATION RESULTS VIEW -->
+                <aside class="valuation-column">
+                    <div class="valuation-output-card" id="valuation-card">
+
+                        <!-- Pre-submission Placeholder state -->
+                        <div class="valuation-pre-state" id="valuation-pre-state">
+                            <div class="valuation-pre-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="16" x2="12" y2="12" />
+                                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.35rem; font-weight:700; margin-bottom: var(--space-sm);">Awaiting
+                                Appraisal</h3>
+                            <p
+                                style="color: var(--secondary-silver-muted); font-size: 0.9rem; padding: 0 var(--space-md);">
+                                Please fill out the vehicle details form and click Calculate to view your live valuation
+                                credit report.</p>
+                        </div>
+
+                        <!-- Active Calculated State -->
+                        <div class="valuation-active-state" id="valuation-active-state">
+                            <span class="valuation-badge">Appraisal Active</span>
+                            <div class="valuation-title" id="val-result-title">Tata Nexon 2021</div>
+                            <div class="valuation-price" id="val-result-price">₹--.-- Lakh</div>
+                            <div class="valuation-range" id="val-result-range">Range: ₹--L - ₹--L</div>
+
+                            <!-- Exchange adjustment layout -->
+                            <div class="trade-breakdown-box" id="trade-breakdown-container" style="display: none;">
+                                <div class="trade-breakdown-row">
+                                    <span>Selected Car Price:</span>
+                                    <span id="breakdown-target-price">₹15.20 Lakh</span>
+                                </div>
+                                <div class="trade-breakdown-row">
+                                    <span>Your Car Credit:</span>
+                                    <span id="breakdown-credit-price">-₹6.15 Lakh</span>
+                                </div>
+                                <div class="trade-breakdown-row total">
+                                    <span>Net Amount to Pay:</span>
+                                    <span id="breakdown-net-pay">₹9.05 Lakh</span>
+                                </div>
+                            </div>
+
+                            <p
+                                style="font-size: 0.85rem; color: var(--secondary-silver-muted); margin-bottom: var(--space-lg); text-align: left;">
+                                *Estimates are mock calculations. Final value is determined post our engineer physical
+                                checklist.</p>
+
+                            <button class="btn btn-primary btn-block btn-lg" id="book-inspection-btn">Book Free Store
+                                Inspection</button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- SUCCESS LEAD CAPTURE MODAL -->
+    <div class="modal" id="lead-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close" id="close-lead-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="lead-success-body">
+                <div class="success-checkmark-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                <h3
+                    style="font-size: 1.5rem; font-weight:800; color:var(--primary-navy); margin-bottom: var(--space-xs);">
+                    Inspection Booking Sent!</h3>
+                <p
+                    style="color:var(--secondary-silver-muted); font-size: 0.95rem; margin-bottom: var(--space-lg); padding: 0 var(--space-md);">
+                    An Exchange Point certified technician will contact you within 2 hours to confirm your hub
+                    inspection slot.</p>
+                <button class="btn btn-secondary btn-block" id="lead-close-done-btn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Footer -->
+    <div id="global-footer"></div>
+
+    <!-- Sell Logic Script -->
+    <script type="module" src="assets/js/sell.js"></script>
+    <!-- Common Script -->
+    <script type="module" src="assets/js/common.js"></script>
+</body>
+
+</html>
