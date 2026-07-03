@@ -1,43 +1,81 @@
 import streamlit as st
-import http.server
-import socketserver
-import threading
-import socket
+import streamlit.components.v1 as components
 import os
+import urllib.parse
 
-# Find an available port on the host machine
-def get_free_port():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('', 0))
-    port = s.getsockname()[1]
-    s.close()
-    return port
-
-# Run a simple HTTP server in a background thread serving the current workspace folder
-@st.cache_resource
-def start_server(port):
-    class Handler(http.server.SimpleHTTPRequestHandler):
-        def log_message(self, format, *args):
-            pass # Mute local logs in streamlit output stream
-            
-    # Set the serving directory to the folder containing this app.py
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(current_dir)
-    
-    httpd = socketserver.TCPServer(("", port), handler)
-    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
-    thread.start()
-    return f"http://localhost:{port}"
-
-# Streamlit Page Setup
+# 5. WIDE LAYOUT: Call st.set_page_config(layout="wide") at the absolute top of the script
 st.set_page_config(
-    page_title="Exchange Point - Pre-owned Showroom",
+    page_title="Exchange Point - Certified Pre-owned Cars",
     page_icon="🚗",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# White-label styling overrides to remove default streamlit headers, footers and margins
+# 3. MULTI-PAGE ROUTING VIA SIDEBAR: Create a simple dynamic router using a Streamlit sidebar radio selector
+st.sidebar.title("Navigation")
+selected_page = st.sidebar.radio(
+    "Go to page:",
+    options=["Home", "Buy Cars", "Sell Car", "Car Details"]
+)
+
+# Map page names to corresponding HTML files
+page_mapping = {
+    "Home": "index.html",
+    "Buy Cars": "inventory.html",
+    "Sell Car": "sell.html",
+    "Car Details": "car-details.html"
+}
+
+filename = page_mapping[selected_page]
+
+# Check root and static/ directories for the HTML file
+html_path = filename
+if not os.path.exists(html_path):
+    html_path = os.path.join("static", filename)
+
+# 4. FILE READING & CONFIG: Read the chosen HTML file safely
+if not os.path.exists(html_path):
+    st.error(f"Error: HTML template '{filename}' not found.")
+    st.stop()
+
+try:
+    with open(html_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+except Exception as e:
+    st.error(f"Error loading {filename}: {str(e)}")
+    st.stop()
+
+# Enable URL query parameter syncing to supply parameters inside the iframe component
+query_params = dict(st.query_params)
+# Handle default ID for car details page to ensure it loads a car if none is specified
+if selected_page == "Car Details" and "id" not in query_params:
+    query_params["id"] = "1"
+
+query_str = "?" + urllib.parse.urlencode(query_params) if query_params else ""
+
+# Inject base href pointing to Streamlit's static assets endpoint & pass URL query parameters
+base_tag = '<base href="/app/static/">'
+injection_script = f"""
+<script>
+    // Supply parent URL query parameters to the iframe context
+    window.iframeQueryString = "{query_str}";
+</script>
+"""
+
+if "<head>" in html_content:
+    html_content = html_content.replace("<head>", f"<head>\n    {base_tag}\n    {injection_script}", 1)
+else:
+    html_content = f"{base_tag}\n{injection_script}\n{html_content}"
+
+# If on the Car Details page, add a handy input selector in the sidebar to change cars easily
+if selected_page == "Car Details":
+    current_id = query_params.get("id", "1")
+    car_id_input = st.sidebar.text_input("View Car ID (1-6):", value=current_id)
+    if car_id_input != current_id:
+        st.query_params["id"] = car_id_input
+        st.rerun()
+
+# Hide default Streamlit style wrappers and scrollbars to maximize the layout
 st.markdown(
     """
     <style>
@@ -45,15 +83,11 @@ st.markdown(
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .block-container {padding: 0 !important; max-width: 100% !important;}
-    iframe {position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 999999;}
+    iframe {border: none; width: 100%; height: 95vh; margin: 0; padding: 0;}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Start background server
-port = get_free_port()
-server_url = start_server(port)
-
-# Load the local server directly in a full-viewport iframe
-st.components.v1.iframe(server_url, height=900)
+# 2. NATIVE STREAMLIT RENDERING: Render via components.html
+components.html(html_content, height=1200, scrolling=True)
